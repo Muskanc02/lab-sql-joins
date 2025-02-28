@@ -32,7 +32,8 @@ group by s.store_id;
 
 
 -- 4.  Determine the average running time of films for each category.
-select ROUND(avg(length)/60) as hr ,ROUND(avg(length)%60) min  ,c.name
+
+select SEC_TO_TIME(FLOOR(ROUND(avg(length*60),2))) as average_duration ,c.name
 from film f
 join 
 film_category fc
@@ -44,11 +45,37 @@ group by c.name;
 
 
 
+
 -- **Bonus**:
 
 -- 5.  Identify the film categories with the longest average running time.
+
+select SEC_TO_TIME(FLOOR(ROUND(avg(length*60),2))) as average_duration ,c.name
+from film f
+join 
+film_category fc
+on f.film_id=fc.film_id
+join 
+category c
+on fc.category_id=c.category_id
+group by c.name
+ORDER BY average_duration DESC
+LIMIT 1;
+
+
 -- 6.  Display the top 10 most frequently rented movies in descending order.
+select title , rental_duration from film
+order by rental_duration desc
+limit 10;
+
 -- 7. Determine if "Academy Dinosaur" can be rented from Store 1.
+select count(distinct i.store_id) 
+from inventory i
+join
+film f
+on f.film_id=i.film_id
+where f.title='Academy Dinosaur';
+
 -- 8. Provide a list of all distinct film titles, along with their availability status in the inventory. 
 -- Include a column indicating whether each title is 'Available' or 'NOT available.' 
 -- Note that there are 42 titles that are not in the inventory, and this information can be obtained 
